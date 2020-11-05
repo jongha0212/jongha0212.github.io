@@ -1,3 +1,9 @@
+---
+layout: page
+title: Category
+permalink: /categories/
+---
+
 <ul class="entry-meta inline-list">
   {% for item in (0..site.categories.size) %}{% unless forloop.last %}
     {% capture this_word %}{{ categories_list[item] | strip_newlines }}{% endcapture %}
