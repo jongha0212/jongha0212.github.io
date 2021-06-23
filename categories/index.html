@@ -23,7 +23,10 @@ title: Category
 	  <a href="{{site.url}}/categories/{{this_word}}"><h2 id="{{ this_word }}" class="tag-heading">{{ this_word }}</h2></a>
     <ul>
     {% for post in site.categories[this_word] %}{% if post.title != null %}
-      <li class="entry-title"><a href="{{ site.url }}{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a></li>
+      <li class="entry-title"><a href="{{ site.url }}{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+          <p>{{ post.excerpt }}</p>
+          <p>{{ post.date | date_to_string }}</p>
+      </li>
     {% endif %}{% endfor %}
 		</ul>
     </article><!-- /.hentry -->
