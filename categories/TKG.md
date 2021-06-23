@@ -1,8 +1,8 @@
 ---
 layout: category
-title : "Tanzu"
-permalink: /categories/Tanzu
-taxonomy: Tanzu
+title : "TKG"
+permalink: /categories/TKG
+taxonomy: TKG
 ---
 
 <!-- <h2> post by category : {{ page.title }} </h2> -->
