@@ -280,3 +280,10 @@ defaults:
       comments: # true
       share: false
       related: true
+  # _pages
+  - scope:
+      path: "_pages"
+      type: pages
+    values:
+      layout: signle
+      author_profile: true
