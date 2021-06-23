@@ -96,7 +96,7 @@ author:
   name             : "Jongha.Hwang"
   avatar           : "/assets/images/jongha0212.jpg"
   bio              : "말은 마음을 담는다. 그래서 말에도 체온이 있다."
-  location         : "Seoul, Korea"
+  location         : "South Korea"
   email            :
   links:
     - label: "Email"
@@ -129,7 +129,7 @@ footer:
       # url:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      # url:
+      url: "https://github.com/jongha0212"
     - label: "GitLab"
       icon: "fab fa-fw fa-gitlab"
       # url:
@@ -209,7 +209,7 @@ sass:
 permalink: /:categories/:title/
 paginate: 5 # amount of posts to show
 paginate_path: /page:num/
-timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+timezone: Asia/Seoul # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 
 # Plugins (previously gems:)
@@ -277,7 +277,7 @@ defaults:
       layout: single
       author_profile: true
       read_time: false
-      comments: # true
+      comments: true
       share: false
       related: true
   # _pages
@@ -285,5 +285,9 @@ defaults:
       path: "_pages"
       type: pages
     values:
-      layout: signle
+      layout: single
       author_profile: true
+      read_time: false
+      comments: false
+      share: false
+      related: false
