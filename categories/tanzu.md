@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: category
 title : "Tanzu"
 permalink: /categories/Tanzu
 taxonomy: Tanzu
