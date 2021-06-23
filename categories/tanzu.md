@@ -1,8 +1,8 @@
 ---
 layout: category
 title : "tanzu"
-#permalink: /categories/tanzu
-#taxonomy: tanzu
+permalink: /categories/tanzu
+taxonomy: tanzu
 ---
 
 <!--
