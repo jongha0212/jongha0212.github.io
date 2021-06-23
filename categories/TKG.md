@@ -2,6 +2,7 @@
 layout: category
 title : "TKG"
 permalink: /categories/TKG
+author_profile: true
 taxonomy: TKG
 ---
 

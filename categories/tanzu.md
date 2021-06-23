@@ -2,6 +2,7 @@
 layout: category
 title : "Tanzu"
 permalink: /categories/Tanzu
+author_profile: true
 taxonomy: Tanzu
 ---
 
