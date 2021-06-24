@@ -1,5 +1,5 @@
 ---
-title: "Kubernetes"
+title: "Kubernetes Install"
 date: 2020-06-11
 categories: [Kubernetes]
 tags: [Kubernetes, Install]
