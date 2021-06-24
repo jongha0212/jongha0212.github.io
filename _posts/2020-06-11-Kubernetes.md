@@ -9,7 +9,7 @@ toc: true
 
 ## Kubernetes <a name="kubernetes"></a>
 
-![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/kubernetes_logo.jpg ){: .align-center}
+![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/kubernetes_logo.png ){: .align-center}
 
 > 쿠버네티스는 컨테이너를 쉽고 빠르게 배포 & 확장하고 관리를 자동화해주는 오픈소스 플랫폼
 
@@ -27,13 +27,13 @@ toc: true
 
 전 세계적 스케일의 경험과 기술이 고스란히 녹아들어 있습니다. 거대한 커뮤니티와 생태계가 있어 잘 안 되는 건 찾아보면 되고 이런 거 만들어 볼까 하면 누군가 만들어 놨습니다. 서비스메시(Istio, linkerd), CI(Tekton, Spinnaker), 컨테이너 서버리스(Knative), 머신러닝(kubeflow)이 모두 쿠버네티스 환경에서 돌아갑니다. 클라우드 네이티브 애플리케이션 대부분이 쿠버네티스와 찰떡궁합입니다.
 
-* Cloud Native Landscape ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/ecosystem_landscape.jpg ){: .align-center}  
+* Cloud Native Landscape ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/ecosystem_landscape.png ){: .align-center}  
 
 ---
 
 ## Kubernetes Architecture <a name="kubernetes-architecture"></a>
 
-![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/architecture.jpg ){: .align-center}
+![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/architecture.png ){: .align-center}
 
 쿠버네티스 클러스터는 크게 2가지 종류로 구성됩니다.  
 클러스터를 관리하는 역할을 하는 마스터(master)와 실제 컨테이너를 실행시키는 작업을 하는 노드(worker)입니다. 구성도는 다음과 같습니다.
@@ -60,7 +60,7 @@ toc: true
 
 여기에 모든 컴포넌트가 함께 있는 쿠버네티스 클러스터 다이어그램이 있습니다.
 
-![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/components-of-kubernetes.jpg ){: .align-center}
+![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/components-of-kubernetes.png ){: .align-center}
 
 ### Control Plane Components <a name="control-plane-components"></a>
 
