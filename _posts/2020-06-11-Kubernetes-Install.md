@@ -20,7 +20,7 @@ Master Node와 Worker Node는 최소 1개씩 필요하며, 본 가이드에서 *
   | Worker Node | 172.16.25.244 | 19.03.11 | 1.18.3 |
 
 
-기본적으로 Kubernetes를 설치하려면 Docker가 설치되어 있어야하며, Docker 설치는 [[가이드|Sandbox.Docker]]를 참조하시기 바랍니다.
+기본적으로 Kubernetes를 설치하려면 Docker가 설치되어 있어야하며, Docker 설치는 [[가이드]]({{ site.url }}{{ site.baseurl }}/Docker/docker/)를 참조하시기 바랍니다.
 
 ---
 
