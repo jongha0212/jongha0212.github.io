@@ -121,6 +121,7 @@ tiller를 설치하기 위해서 서비스 계정을 생성하고, cluster-admin
 
 1. ServiceAccount & ClusterRole 생성
     * yaml 활용    
+
       ```
       $ vi rbac-tiller.yaml
       ---
