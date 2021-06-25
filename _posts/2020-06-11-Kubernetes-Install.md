@@ -249,13 +249,13 @@ Master Node에서 다음 명령어를 실행하여 Worker Node가 Join 상태를
 
 
 #### Worker Node Join Argument <a name="worker-node-join-argument"></a>
-* "--token"
+* ---token
 token은 Master Node에서 기본적으로 24시간 뒤 만료됩니다.
     > $ sudo kubeadm token list
 
     ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/install/kube-token-list.png ){: .align-center}
 
-* "--discovery-token-ca-cert-hash"
+* ---discovery-token-ca-cert-hash
 Worker Node에 Control Plane의 CA를 검증하는 메커니즘을 제공합니다. CA의 SHA256 해시값을 미리 공유함으로써 Worker Node의 의도된 Control Plane에서 받은 자격 증명인지 유효성을 검사할 수 있습니다.
     > $ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
 
