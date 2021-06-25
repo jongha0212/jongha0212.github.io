@@ -16,8 +16,8 @@ Master Node와 Worker Node는 최소 1개씩 필요하며, 본 가이드에서 *
 
   | <center>구  분</center> | <center>HOSTNAME</center> | <center>Docker Version</center> | <center>Kubernetes Version</center> |
   |:---:|:---:|:---:|:---:|
-  | Master Node | 172.16.25.243 | 19.03.11 | 1.18.3 |
-  | Worker Node | 172.16.25.244 | 19.03.11 | 1.18.3 |
+  | Master Node | xxx.xxx.xxx.xxx | 19.03.11 | 1.18.3 |
+  | Worker Node | xxx.xxx.xxx.xxx | 19.03.11 | 1.18.3 |
 
 
 기본적으로 Kubernetes를 설치하려면 Docker가 설치되어 있어야하며, Docker 설치는 [[가이드]]({{ site.url }}{{ site.baseurl }}/docker/Docker/)를 참조하시기 바랍니다.
@@ -116,15 +116,15 @@ W0615 05:27:47.196217   15748 configset.go:202] WARNING: kubeadm cannot validate
 [certs] Using certificateDir folder "/etc/kubernetes/pki"
 [certs] Generating "ca" certificate and key
 [certs] Generating "apiserver" certificate and key
-[certs] apiserver serving cert is signed for DNS names [dev-master kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 172.16.25.243]
+[certs] apiserver serving cert is signed for DNS names [dev-master kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 xxx.xxx.xxx.xxx]
 [certs] Generating "apiserver-kubelet-client" certificate and key
 [certs] Generating "front-proxy-ca" certificate and key
 [certs] Generating "front-proxy-client" certificate and key
 [certs] Generating "etcd/ca" certificate and key
 [certs] Generating "etcd/server" certificate and key
-[certs] etcd/server serving cert is signed for DNS names [dev-master localhost] and IPs [172.16.25.243 127.0.0.1 ::1]
+[certs] etcd/server serving cert is signed for DNS names [dev-master localhost] and IPs [xxx.xxx.xxx.xxx 127.0.0.1 ::1]
 [certs] Generating "etcd/peer" certificate and key
-[certs] etcd/peer serving cert is signed for DNS names [dev-master localhost] and IPs [172.16.25.243 127.0.0.1 ::1]
+[certs] etcd/peer serving cert is signed for DNS names [dev-master localhost] and IPs [xxx.xxx.xxx.xxx 127.0.0.1 ::1]
 [certs] Generating "etcd/healthcheck-client" certificate and key
 [certs] Generating "apiserver-etcd-client" certificate and key
 [certs] Generating "sa" key and public key
@@ -234,7 +234,7 @@ Mastet Node를 생성하고 출력된 메세지의 맨 하단의 아래와 같�
 ```
 Then you can join any number of worker nodes by running the following on each as root:
 
-kubeadm join 172.16.25.243:6443 --token rongp5.si4jcn12t6ehwfuc \
+kubeadm join xxx.xxx.xxx.xxx:6443 --token rongp5.si4jcn12t6ehwfuc \
     --discovery-token-ca-cert-hash sha256:6af2b76e6245ceb5287c3b8e37727f3786c4292d82c72fa251874deddd2cc3b3
 ```
 
@@ -249,13 +249,13 @@ Master Node에서 다음 명령어를 실행하여 Worker Node가 Join 상태를
 
 
 #### Worker Node Join Argument <a name="worker-node-join-argument"></a>
-* --token  
+* "--token"
 token은 Master Node에서 기본적으로 24시간 뒤 만료됩니다.
     > $ sudo kubeadm token list
 
     ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/install/kube-token-list.png ){: .align-center}
 
-* --discovery-token-ca-cert-hash  
+* "--discovery-token-ca-cert-hash"
 Worker Node에 Control Plane의 CA를 검증하는 메커니즘을 제공합니다. CA의 SHA256 해시값을 미리 공유함으로써 Worker Node의 의도된 Control Plane에서 받은 자격 증명인지 유효성을 검사할 수 있습니다.
     > $ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
 
@@ -273,7 +273,7 @@ Worker Node에 Control Plane의 CA를 검증하는 메커니즘을 제공합니�
   1. join 명령어
       > $ kubeadm join { Worker Node IP }:6443 --token { 1. Token 생성 값 } --discovery-token-ca-cert-hash sha256:{ 2. CA SHA256 값 }
       ```
-      kubeadm join 172.16.25.243:6443 --token 0coiv6.iizap0gnu8yuyae9 \
+      kubeadm join xxx.xxx.xxx.xxx:6443 --token 0coiv6.iizap0gnu8yuyae9 \
           --discovery-token-ca-cert-hash sha256:6af2b76e6245ceb5287c3b8e37727f3786c4292d82c72fa251874deddd2cc3b3
       ```
 
