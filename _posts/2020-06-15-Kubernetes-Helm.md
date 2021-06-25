@@ -9,7 +9,7 @@ toc: true
 
 # Helm <a name="helm"></a>
 
-![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/heml/helm_logo.png){: .align-center}
+![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/helm/helm_logo.png){: .align-center}
 
 Helm은 Docker가 나오면서 Container 혁신이 이루어졌습니다.    
 그리고 이 Container를 쉽게 빠르게 배포 & 확장하고 관리해주는 Container Orchestration인 Kubernetes가 나오게 됩니다.    
@@ -30,7 +30,7 @@ chart라고 부르는 package format을 사용하는데 chart는 Kubernetes Reso
   * **Kubernetes Cluster에 차트** 인스톨 및 언인스톨
   * Helm으로 설치된 차트들의 **릴리스 주기 관리**
 
-![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/heml/helm-architecture.png){: .align-center}
+![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/helm/helm-architecture.png){: .align-center}
 
 ### Helm 3가지 개념 <a name="helm-3가지-개념"></a>
   * **Chart**는 쿠버네티스 애플리케이션의 인스턴스를 생성하는 데에 필요한 정보의 패키지입니다.  
@@ -69,7 +69,7 @@ chart의 형태는 다음과 같은 구조를 되어 있으며 버전 정보가 
 **gitlab-4.0.2.tgz** 파일은 **4.0.2** 버전의 **gitlab chart**이며 Chart에 대한 더 자세한 사항은 [**Helm Chart Template Guide**](https://helm.sh/docs/chart_template_guide/ "Chart Template Guide")를 참고하시면 됩니다.
 
   * Gitlab Chart Sample    
-    ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/heml/helm-chart-sample.png)
+    ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/helm/helm-chart-sample.png)
 
 Chart Name은 Directory Name과 동일하며 Directory 안에 Chart 파일들이 있으며, 각 파일에 대한 설명은 다음과 같습니다.
 
@@ -109,12 +109,12 @@ Helm Client는 [**Github**](https://github.com/helm/helm/releases "Helm Download
     > $ sudo chown root:ubuntu /usr/local/bin/tiller    
     > $ sudo chown root:ubuntu /usr/local/bin/helm    
 
-    ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/heml/helm-install.png)
+    ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/helm/helm-install.png)
 1. Helm 설치 확인    
     설치가 잘 되었는지 다음 명령어로 확인하실 수 있습니다.    
     > $ helm version    
 
-    ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/heml/helm-version.png)
+    ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/helm/helm-version.png)
 
 ### Helm Server Tiller <a name="helm-server-tiller"></a>
 tiller를 설치하기 위해서 서비스 계정을 생성하고, cluster-admin Role을 생성합니다. CLI로 생성하거나 yaml을 활용하여 생성해도 됩니다.    
@@ -145,29 +145,29 @@ tiller를 설치하기 위해서 서비스 계정을 생성하고, cluster-admin
           namespace: kube-system
       ```
 
-      ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/heml/helm-tiller-yaml.png)
+      ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/helm/helm-tiller-yaml.png)
 1. ServiceAccount & ClusterRole 적용
     * CLI 활용
       > $ kubectl -n kube-system create sa tiller    
       > $ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller    
 
-      ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/heml/helm-tiller-cli-create.png)
+      ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/helm/helm-tiller-cli-create.png)
 
     * yaml 활용
       > $ kubectl apply -f ./rbac-tiller.yaml    
 
-      ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/heml/helm-tiller-yaml-create.png)
+      ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/helm/helm-tiller-yaml-create.png)
 1. tiller 설치
     * CLI 활용
       > $ helm init --service-account tiller    
 
-      ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/heml/helm-tiller-init.png)
+      ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/helm/helm-tiller-init.png)
 
 1. helm repository update
     * CLI 활용
       > $ helm repo update
 
-      ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/heml/helm-repo-update.png)
+      ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/helm/helm-repo-update.png)
 
 ---
 
