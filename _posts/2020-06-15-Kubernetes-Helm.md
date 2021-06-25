@@ -120,7 +120,7 @@ Helm Client는 [**Github**](https://github.com/helm/helm/releases "Helm Download
 tiller를 설치하기 위해서 서비스 계정을 생성하고, cluster-admin Role을 생성합니다. CLI로 생성하거나 yaml을 활용하여 생성해도 됩니다.    
 
 1. ServiceAccount & ClusterRole 생성
-    * yaml 활용
+    * yaml 활용    
       ```
       $ vi rbac-tiller.yaml
       ---
