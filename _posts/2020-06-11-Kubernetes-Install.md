@@ -20,7 +20,7 @@ Master Node와 Worker Node는 최소 1개씩 필요하며, 본 가이드에서 *
   | Worker Node | 172.16.25.244 | 19.03.11 | 1.18.3 |
 
 
-기본적으로 Kubernetes를 설치하려면 Docker가 설치되어 있어야하며, Docker 설치는 [[가이드]]({{ site.url }}{{ site.baseurl }}/Docker/docker/)를 참조하시기 바랍니다.
+기본적으로 Kubernetes를 설치하려면 Docker가 설치되어 있어야하며, Docker 설치는 [[가이드]]({{ site.url }}{{ site.baseurl }}/docker/Docker/)를 참조하시기 바랍니다.
 
 ---
 
@@ -75,12 +75,12 @@ $ sudo swapoff -a
 ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/install/swapoff.png ){: .align-center}
 
 swap이 off로 되어 있지 않으면, **kubeadm init** 단계에서 다음과 같은 메세지가 출력됩니다.  
-```default
+```
 [ERROR]: running with swap on is not supported. Please disable swap
 ```
 
 #### Master Node init <a name="master-node-init"></a>
-```default
+```
 $ sudo sysctl net.bridge.bridge-nf-call-iptables=1
 $ sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.150.56
 ```
@@ -101,8 +101,8 @@ Pod 네트워크가 호스트 네트워크와 겹치면 문제가 발생할 수 
 
 ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/install/kube-init.png ){: .align-center}
 
-```default
-[ubuntu@dev-master /home/ubuntu]$ sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=172.16.25.243
+```
+[ubuntu@dev-master /home/ubuntu]$ sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=xxx.xxx.xxx.xxx
 W0615 05:27:47.196217   15748 configset.go:202] WARNING: kubeadm cannot validate component configs for API groups [kubelet.config.k8s.io kubeproxy.config.k8s.io]
 [init] Using Kubernetes version: v1.18.3
 [preflight] Running pre-flight checks
@@ -172,13 +172,13 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 
 Then you can join any number of worker nodes by running the following on each as root:
 
-kubeadm join 172.16.25.243:6443 --token rongp5.si4jcn12t6ehwfuc \
+kubeadm join xxx.xxx.xxx.xxx:6443 --token rongp5.si4jcn12t6ehwfuc \
     --discovery-token-ca-cert-hash sha256:6af2b76e6245ceb5287c3b8e37727f3786c4292d82c72fa251874deddd2cc3b3
 ```
 
 초기화 후 하단에 노드 추가하는 명령어가 있습니다.  
 노드 추가할 때 위의 명령어를 사용해야하므로 복사해 두시기 바랍니다. 또한, 설치한 클러스터를 사용하려면 위의 명령어를 실행해야 합니다.  
-```default
+```
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
@@ -198,7 +198,7 @@ RBAC는 사용자와 역할을 별개로 생성한 후 서로를 엮어서(bindi
 kubeadm은 기본적으로 안전한 클러스터 구성을 위하여 RBAC 사용을 권장합니다.  
 만약 다른 컴퓨터에서 kubectl을 사용하여 클러스터와 통신하고 싶다면 아래와 같이 admin.conf 파일을 마스터 노드에서 복사한 후 kubectl --kubeconfig 명령어를 통해 가능합니다.   
 
-```default
+```
 $ kubectl --kubeconfig /path/admin.conf get nodes
 ```
 
@@ -231,7 +231,7 @@ Master Node가 잘 세팅 되었는지 아래 명령어를 통해 확인해볼 �
 
 Mastet Node를 생성하고 출력된 메세지의 맨 하단의 아래와 같은 메세지를 확인할 수 있습니다.
 
-```default
+```
 Then you can join any number of worker nodes by running the following on each as root:
 
 kubeadm join 172.16.25.243:6443 --token rongp5.si4jcn12t6ehwfuc \
@@ -272,7 +272,7 @@ Worker Node에 Control Plane의 CA를 검증하는 메커니즘을 제공합니�
      ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/install/kube-ca.png ){: .align-center}
   1. join 명령어
       > $ kubeadm join { Worker Node IP }:6443 --token { 1. Token 생성 값 } --discovery-token-ca-cert-hash sha256:{ 2. CA SHA256 값 }
-      ```default
+      ```
       kubeadm join 172.16.25.243:6443 --token 0coiv6.iizap0gnu8yuyae9 \
           --discovery-token-ca-cert-hash sha256:6af2b76e6245ceb5287c3b8e37727f3786c4292d82c72fa251874deddd2cc3b3
       ```
@@ -283,7 +283,7 @@ Worker Node에 Control Plane의 CA를 검증하는 메커니즘을 제공합니�
 Kubernetes를 삭제 하려면 다음 명령어를 순차적으로 실행하시면 Kubernetes가 정상적으로 삭제됩니다.  
 (* _해당 명령어는 OS에 따라 다소 다를수 있습니다._)
 
-```default
+```
 $ sudo kubeadm reset
 $ sudo systemctl stop kubelet
 
