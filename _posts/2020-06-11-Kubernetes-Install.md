@@ -28,11 +28,11 @@ Master Node와 Worker Node는 최소 1개씩 필요하며, 본 가이드에서 *
 
 1. 신뢰할 수 있는 APT 키 추가    
     > $ sudo apt install apt-transport-https  
-    > $ curl -s <https://packages.cloud.google.com/apt/doc/apt-key.gpg> | sudo apt-key add
+    > $ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
 
     ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/install/apt-transport.png ){: .align-center}
 1. Repository 추가
-    > $ echo "deb <https://apt.kubernetes.io/> kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+    > $ echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
 
     ![]({{ site.url }}{{ site.baseurl }}/assets/images/kubernetes/install/add-repository.png ){: .align-center}
 1. Kubernetes 설치
