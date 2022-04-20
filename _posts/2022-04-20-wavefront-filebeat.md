@@ -38,7 +38,7 @@ published: true
     ```
 1. Install
 
-  1. helm chart를 받아서 values.yaml을 수정
+  * helm chart를 받아서 values.yaml을 수정
     ```console
     $ helm pull wavefront/wavefront
     ```
@@ -48,7 +48,7 @@ published: true
         $ kubectl create ns wavefront
         $ helm install wavefront -n wavefront -f ./values.yaml .
         ```
-  1. online 설치
+  * online 설치
 
     ```console
     kubectl create namespace wavefront && helm install wavefront wavefront/wavefront \
