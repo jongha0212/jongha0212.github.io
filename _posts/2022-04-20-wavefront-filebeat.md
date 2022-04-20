@@ -38,29 +38,29 @@ published: true
     ```
 1. Install
 
-  * helm chart를 받아서 values.yaml을 수정
-    ```console
-    $ helm pull wavefront/wavefront
-    ```
-    * pull 받은 **wavefront-1.10.1.tgz** 파일 압축 해제 후 values.yaml 수정
+    * helm chart를 받아서 values.yaml을 수정
+      ```console
+      $ helm pull wavefront/wavefront
+      ```
+        * pull 받은 **wavefront-1.10.1.tgz** 파일 압축 해제 후 values.yaml 수정
 
-        ```console
-        $ kubectl create ns wavefront
-        $ helm install wavefront -n wavefront -f ./values.yaml .
-        ```
-  * online 설치
+            ```console
+            $ kubectl create ns wavefront
+            $ helm install wavefront -n wavefront -f ./values.yaml .
+            ```
+    * online 설치
 
-    ```console
-    kubectl create namespace wavefront && helm install wavefront wavefront/wavefront \
-      --set wavefront.url=https://<wavefront url> \
-      --set wavefront.token=<wavefront token> \
-      --set clusterName=<cluster name> --namespace wavefront \
-      --set proxy.traceJaegerApplicationName="Boutique" \
-      --set proxy.jaegerPort=30001 \
-      --set proxy.replicas=3 \
-      --set proxy.traceJaegerHttpListenerPort=30080 \
-      --set proxy.replicas=3
-    ```
+      ```console
+      kubectl create namespace wavefront && helm install wavefront wavefront/wavefront \
+        --set wavefront.url=https://<wavefront url> \
+        --set wavefront.token=<wavefront token> \
+        --set clusterName=<cluster name> --namespace wavefront \
+        --set proxy.traceJaegerApplicationName="Boutique" \
+        --set proxy.jaegerPort=30001 \
+        --set proxy.replicas=3 \
+        --set proxy.traceJaegerHttpListenerPort=30080 \
+        --set proxy.replicas=3
+      ```
 
 #### VM or Baremetal
 
@@ -99,6 +99,8 @@ ubuntu 20.04 기준으로 작성되었으며, apt를 사용하여 설치.
 
     ```yaml
     counters:
+      - pattern: '%{COMBINEDAPACHELOG}'
+        metricName: 'kubernetes_log_lines'
       - pattern: 'quantity=%{NUMBER:count}'
         valueLabel: 'count'
         metricName: 'cartService'
@@ -123,7 +125,7 @@ ubuntu 20.04 기준으로 작성되었으며, apt를 사용하여 설치.
 
 1. wavefront start & stop
 
-    ```console
+    ```log
     $ service wavefront-proxy start
     $ tail -f /var/log/wavefront/wavefront.log
     2022-04-20 14:36:03,240 INFO  [proxy:parseArguments] Wavefront Proxy version 11.0 (pkg:linux_rpm_deb), runtime: OpenJDK Runtime Environment (Azul Systems, Inc.) 11.0.9
@@ -178,4 +180,291 @@ ubuntu 20.04 기준으로 작성되었으며, apt를 사용하여 설치.
     ...
     ```
 
-## Filebeat
+### Install Filebeat
+
+helm chart로 k8s cluster에 설치.
+
+1. Helm Repo Add
+
+    ```console
+    $ helm repo add elastic https://helm.elastic.co
+    ```
+1. Install
+
+    * helm chart를 받아서 values.yaml을 수정
+
+      ```console
+      $ helm pull elastic/filebeat
+      ```
+    * pull 받은 **filebeat-7.17.1.tgz** 파일 압축 해제 후 values.yaml 수정
+
+        ```console
+        $ vi values.yaml
+        ...
+        filebeatConfig:
+          filebeat.yml: |
+            filebeat.inputs:
+            - type: container
+              #tags: ["json"]
+              paths:
+                - /var/log/containers/*.log
+              processors:
+              - add_kubernetes_metadata:
+                  host: ${NODE_NAME}
+                  matchers:
+                  - logs_path:
+                      logs_path: "/var/log/containers/"
+
+            output.logstash:
+              hosts: "<wavefront proxy fqdn or ip>:5044"
+        ...
+        ```
+    * helm install
+
+        ```console
+        $ kubectl create ns filebeat
+        $ helm install filebeat -n filebeat -f ./values.yaml .
+        ```
+    * 설치 확인
+
+        ```console
+        NAME                          READY   STATUS    RESTARTS   AGE
+        pod/filebeat-filebeat-nj6cr   1/1     Running   0          38h
+        pod/filebeat-filebeat-rkm5h   1/1     Running   0          38h
+
+        NAME                               DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+        daemonset.apps/filebeat-filebeat   2         2         2       2            2           <none>          38h
+        ```
+
+### Install Wavefront-Proxy & Adapter & Prometheus
+
+kubernetes cluster에서 실행중인 prometheus에서 metric 수집하기 위해 **wavefront-proxy**, **adapter**, **prometheus** 설치.
+
+#### Install wavefront-proxy
+
+1. wavefront-proxy 배포
+    * 아래 wavefront.yaml 생성 후 배포
+    * **WAVEFRONT_URL**, **WAVEFRONT_TOKEN** 정보 수정
+    * k apply -f ./wavefront.yaml
+
+      ```yaml
+      # Need to change YOUR_CLUSTER and YOUR_API_TOKEN accordingly
+      apiVersion: apps/v1
+      # Kubernetes versions after 1.9.0 should use apps/v1
+      # Kubernetes version 1.8.x should use apps/v1beta2
+      # Kubernetes versions before 1.8.0 should use apps/v1beta1
+      kind: Deployment
+      metadata:
+        labels:
+          app: wavefront-proxy
+          name: wavefront-proxy
+        name: wavefront-proxy
+        namespace: default
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: wavefront-proxy
+        template:
+          metadata:
+            labels:
+              app: wavefront-proxy
+          spec:
+            containers:
+              - name: wavefront-proxy
+                image: projects.registry.vmware.com/tanzu_observability/proxy:11.0
+                imagePullPolicy: IfNotPresent
+                env:
+                  - name: WAVEFRONT_URL
+                    value: https://<wavefront url>/api/
+                  - name: WAVEFRONT_TOKEN
+                    value: <wavefront token>
+                # Uncomment the below lines to consume Zipkin/Istio traces
+                #- name: WAVEFRONT_PROXY_ARGS
+                #  value: --traceZipkinListenerPorts 9411
+                ports:
+                  - containerPort: 2878
+                    protocol: TCP
+                # Uncomment the below lines to consume Zipkin/Istio traces
+                #- containerPort: 9411
+                #  protocol: TCP
+                securityContext:
+                  privileged: false       
+      ---
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: wavefront-proxy
+        labels:
+          app: wavefront-proxy
+        namespace: default
+      spec:
+        ports:
+          - name: wavefront
+            port: 2878
+            protocol: TCP
+        # Uncomment the below lines to consume Zipkin/Istio traces
+        #- name: http
+        #  port: 9411
+        #  targetPort: 9411
+        #  protocol: TCP
+        selector:
+          app: wavefront-proxy
+      ```
+1. 설치 확인
+
+    ```console
+    k get deployment,pod,svc -n default
+    NAME                                         READY   UP-TO-DATE   AVAILABLE   AGE    
+    deployment.apps/wavefront-proxy              1/1     1            1           2d2h
+
+    NAME                                             READY   STATUS    RESTARTS   AGE        
+    pod/wavefront-proxy-6c4b4d45b6-qfrf6             1/1     Running   0          2d2h
+
+    NAME                              TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+    service/wavefront-proxy           ClusterIP   10.107.101.130   <none>        2878/TCP                     2d2h
+    ```
+
+#### Install wavefront prometheus storage adapter
+
+storage adapter는 **fork** 역할을 하여 데이터를 wavefront로 전달.
+
+1. storage adapter 배포
+
+    * 아래 adapter.yaml 생성 후 배포
+    * **-proxy**, **-prefix** 수정
+    * k apply -f ./adapter.yaml
+
+      ```yaml
+      kind: Deployment
+      apiVersion: apps/v1
+      metadata:
+        name: prometheus-storage-adapter
+        namespace: default
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: prometheus-storage-adapter
+        template:
+          metadata:
+            labels:
+              app: prometheus-storage-adapter
+          spec:
+            containers:
+            - name: prometheus-storage-adapter
+              image: wavefronthq/prometheus-storage-adapter:latest
+              command:
+              - /bin/adapter
+              - -listen=1234
+              - -proxy=wavefront-proxy.default.svc.cluster.local
+              - -proxy-port=2878
+              - -prefix=wavefront
+      ---
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: storage-adapter-service
+      spec:
+        selector:
+          app: prometheus-storage-adapter
+        ports:
+          - name: adapter-port
+            protocol: TCP
+            port: 80
+            targetPort: 1234
+      ```
+1. 설치 확인
+
+    ```console
+    k get deployment,pod,svc -n default
+    NAME                                         READY   UP-TO-DATE   AVAILABLE   AGE
+    deployment.apps/prometheus-storage-adapter   1/1     1            1           4d22h
+
+    NAME                                             READY   STATUS    RESTARTS   AGE
+    pod/wavefront-proxy-6c4b4d45b6-qfrf6             1/1     Running   0          2d2h
+
+    NAME                              TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+    service/storage-adapter-service   ClusterIP   10.101.190.141   <none>        80/TCP                       4d22h
+    ```
+
+#### Install Prometheus
+
+1. Helm Repo Add
+
+    ```console
+    $ helm repo add elastic https://helm.elastic.co
+    ```
+1. Install
+
+    * helm chart를 받아서 values.yaml을 수정
+
+      ```console
+      $ helm pull prometheus-community/prometheus
+      ```
+    * pull 받은 **prometheus-15.8.1.tgz** 파일 압축 해제 후 values.yaml 수정
+
+        ```console
+        $ vi values.yaml
+        ...
+          remoteWrite:
+            - url: "http://storage-adapter-service.default.svc.cluster.local/receive"        
+        ...
+        ```
+    * storage adapter를 prometheus와 통합하려면 **remoteWrite** 추가
+    * helm install
+
+        ```console
+        $ kubectl create ns prometheus
+        $ helm install prometheus -n prometheus -f ./values.yaml .
+        ```
+    * 설치 확인
+
+        ```console        
+        $ k get all -n prometheus
+        NAME                                                 READY   STATUS    RESTARTS   AGE
+        pod/prometheus-alertmanager-87bd747b4-bz9c7          2/2     Running   0          4d22h
+        pod/prometheus-kube-state-metrics-5fd8648d78-5wz8c   1/1     Running   0          4d22h
+        pod/prometheus-node-exporter-2t7kh                   1/1     Running   0          4d22h
+        pod/prometheus-node-exporter-pqpss                   1/1     Running   0          4d22h
+        pod/prometheus-pushgateway-fd65767c7-sfhhk           1/1     Running   0          4d22h
+        pod/prometheus-server-6c55d96794-qg678               2/2     Running   0          4d22h
+
+        NAME                                    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+        service/prometheus-alertmanager         ClusterIP   10.104.118.115   <none>        80/TCP     4d22h
+        service/prometheus-kube-state-metrics   ClusterIP   10.108.224.119   <none>        8080/TCP   4d22h
+        service/prometheus-node-exporter        ClusterIP   None             <none>        9100/TCP   4d22h
+        service/prometheus-pushgateway          ClusterIP   10.96.68.63      <none>        9091/TCP   4d22h
+        service/prometheus-server               ClusterIP   10.109.181.44    <none>        80/TCP     4d22h        
+
+        NAME                                      DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+        daemonset.apps/prometheus-node-exporter   2         2         2       2            2           <none>          4d22h
+
+        NAME                                            READY   UP-TO-DATE   AVAILABLE   AGE
+        deployment.apps/prometheus-alertmanager         1/1     1            1           4d22h
+        deployment.apps/prometheus-kube-state-metrics   1/1     1            1           4d22h
+        deployment.apps/prometheus-pushgateway          1/1     1            1           4d22h
+        deployment.apps/prometheus-server               1/1     1            1           4d22h
+
+        NAME                                                       DESIRED   CURRENT   READY   AGE
+        replicaset.apps/prometheus-alertmanager-87bd747b4          1         1         1       4d22h
+        replicaset.apps/prometheus-kube-state-metrics-5fd8648d78   1         1         1       4d22h
+        replicaset.apps/prometheus-pushgateway-fd65767c7           1         1         1       4d22h
+        replicaset.apps/prometheus-server-6c55d96794               1         1         1       4d22h
+        ```
+
+---
+
+## Tanzu Observability Dashboard 확인
+
+* 위의 설정을 하면 filebeat에서 발생한 로그의 metric을 **TO Metrics**에서 확인 가능.
+
+    ![Tanzu Observability Metric.]({{ site.url }}{{ site.baseurl }}/assets/images/tanzu/to/filebeat/wavefront-metric.png){: .align-center}
+
+* 수집된 metric을 기반으로 chart를 생성할 수 있음.
+    ![Tanzu Observability Metric.]({{ site.url }}{{ site.baseurl }}/assets/images/tanzu/to/filebeat/wavefront-chart1.png){: .align-center}
+
+    ![Tanzu Observability Metric.]({{ site.url }}{{ site.baseurl }}/assets/images/tanzu/to/filebeat/wavefront-chart2.png){: .align-center}
+
+* 만들어진 chart를 조합하여 **Dashboard**를 생성할 수 있음.
+    ![Tanzu Observability Metric.]({{ site.url }}{{ site.baseurl }}/assets/images/tanzu/to/filebeat/wavefront-dashboard.png){: .align-center}
