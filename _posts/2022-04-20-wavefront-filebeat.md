@@ -77,50 +77,49 @@ ubuntu 20.04 기준으로 작성되었으며, apt를 사용하여 설치.
 
 1. wavefront.conf 설정
 
-  ```console
-  $ vi /etc/wavefront/wavefront-proxy/wavefront.conf
-  ...
-  server=https://<wavefront url>/api/
-  hostname=<hostname or kubernetes cluster name>
-  token=<wavefront token>
-  ...
-  ...
-
-  ###### LOGS TO METRICS SETTINGS #####
-  filebeatPort=5044
-  rawLogsPort=5045
-  rawLogsMaxReceivedLength=4096
-  rawLogsHttpBufferSize=16777216
-  logsIngestionConfigFile=/etc/wavefront/wavefront-proxy/logsingestion.yaml
-  ...
-  ```
-  * filebeat 연동을 위해 관련된 설정을 수정.
+    ```console
+    $ vi /etc/wavefront/wavefront-proxy/wavefront.conf
+    ...
+    server=https://<wavefront url>/api/
+    hostname=<hostname or kubernetes cluster name>
+    token=<wavefront token>
+    ...
+    ...
+    ###### LOGS TO METRICS SETTINGS #####
+    filebeatPort=5044
+    rawLogsPort=5045
+    rawLogsMaxReceivedLength=4096
+    rawLogsHttpBufferSize=16777216
+    logsIngestionConfigFile=/etc/wavefront/wavefront-proxy/logsingestion.yaml
+    ...
+    ```
+    * filebeat 연동을 위해 관련된 설정을 수정.
 
 1. filebeat 연동을 위해 logingestion.yaml 생성
 
-  ```yaml
-  counters:
-    - pattern: 'quantity=%{NUMBER:count}'
-      valueLabel: 'count'
-      metricName: 'cartService'
-    - pattern: '%{IPORHOST:[clientip]} -  \[%{HTTPDATE:[timestamp]}\] \"%{WORD:[method]} %{DATA:[request]} HTTP/%{NUMBER:[http_version]}\" %{NUMBER:[response]} (?:%{NUMBER:[bytes]}|-)( \"%{DATA:[referrer]}\")( \"%{DATA:[agent]}\")'
-      metricName: 'nginx_log_lines'
-  gauges:
-    - pattern: '%{IPORHOST:[clientip]} -  \[%{HTTPDATE:[timestamp]}\] \"%{WORD:[method]} %{DATA:[request]} HTTP/%{NUMBER:[http_version]}\" %{NUMBER:[response]} (?:%{NUMBER:[bytes]}|-)( \"%{DATA:[referrer]}\")( \"%{DATA:[agent]}\")'
-      valueLabel: '[response]'
-      metricName: 'nginxStatus'
-    - pattern: 'quantity=%{NUMBER:count}'
-      valueLabel: 'count'
-      metricName: 'cartServiceGauge'
-  histograms:
-    - pattern: '%{IPORHOST:[clientip]} -  \[%{HTTPDATE:[timestamp]}\] \"%{WORD:[method]} %{DATA:[request]} HTTP/%{NUMBER:[http_version]}\" %{NUMBER:[response]} (?:%{NUMBER:[bytes]}|-)( \"%{DATA:[referrer]}\")( \"%{DATA:[agent]}\")'
-      metricName: 'responseBytes'
-      valueLabel: '[bytes]'
-    - pattern: 'quantity=%{NUMBER:count}'
-      valueLabel: 'count'
-      metricName: 'cartServiceHistogram'
-  ```
-  * nginx ingress와 boutique 정보를 가져오기 위해 2종류의 pattern 설정
+    ```yaml
+    counters:
+      - pattern: 'quantity=%{NUMBER:count}'
+        valueLabel: 'count'
+        metricName: 'cartService'
+      - pattern: '%{IPORHOST:[clientip]} -  \[%{HTTPDATE:[timestamp]}\] \"%{WORD:[method]} %{DATA:[request]} HTTP/%{NUMBER:[http_version]}\" %{NUMBER:[response]} (?:%{NUMBER:[bytes]}|-)( \"%{DATA:[referrer]}\")( \"%{DATA:[agent]}\")'
+        metricName: 'nginx_log_lines'
+    gauges:
+      - pattern: '%{IPORHOST:[clientip]} -  \[%{HTTPDATE:[timestamp]}\] \"%{WORD:[method]} %{DATA:[request]} HTTP/%{NUMBER:[http_version]}\" %{NUMBER:[response]} (?:%{NUMBER:[bytes]}|-)( \"%{DATA:[referrer]}\")( \"%{DATA:[agent]}\")'
+        valueLabel: '[response]'
+        metricName: 'nginxStatus'
+      - pattern: 'quantity=%{NUMBER:count}'
+        valueLabel: 'count'
+        metricName: 'cartServiceGauge'
+    histograms:
+      - pattern: '%{IPORHOST:[clientip]} -  \[%{HTTPDATE:[timestamp]}\] \"%{WORD:[method]} %{DATA:[request]} HTTP/%{NUMBER:[http_version]}\" %{NUMBER:[response]} (?:%{NUMBER:[bytes]}|-)( \"%{DATA:[referrer]}\")( \"%{DATA:[agent]}\")'
+        metricName: 'responseBytes'
+        valueLabel: '[bytes]'
+      - pattern: 'quantity=%{NUMBER:count}'
+        valueLabel: 'count'
+        metricName: 'cartServiceHistogram'
+    ```
+    * nginx ingress와 boutique 정보를 가져오기 위해 2종류의 pattern 설정
 
 1. wavefront start & stop
 
