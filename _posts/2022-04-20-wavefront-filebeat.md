@@ -125,7 +125,7 @@ ubuntu 20.04 기준으로 작성되었으며, apt를 사용하여 설치.
 
 1. wavefront start & stop
 
-    ```log
+    ```console
     $ service wavefront-proxy start
     $ tail -f /var/log/wavefront/wavefront.log
     2022-04-20 14:36:03,240 INFO  [proxy:parseArguments] Wavefront Proxy version 11.0 (pkg:linux_rpm_deb), runtime: OpenJDK Runtime Environment (Azul Systems, Inc.) 11.0.9
