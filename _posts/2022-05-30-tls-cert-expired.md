@@ -2,7 +2,7 @@
 title: "TLS Certificate Expire Date"
 date: 2022-05-30
 categories: [Kubernetes]
-tags: [Kubernetes, Seret, TLS, certificate]
+tags: [Kubernetes, Secret, TLS, Certificate]
 description: TLS Certificate Expire Date
 toc: true
 published: true
