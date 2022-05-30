@@ -12,8 +12,10 @@ published: true
 
 1. PV, PVC 삭제 안될때  **grace-period**, **force** 옵션 사용.
 
-    > --grace-period=0    
-    > --grace-period=0 --force   
+    ```console
+     $ k delete pv <pv_name> --grace-period=0
+     $ k delete pv <pv_name> --grace-period=0 --force
+    ```
 
 1. 이것도 안되면 **k edit** 로 내용 확인.
     > kubernetes.io/pv-protection    
