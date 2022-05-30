@@ -10,7 +10,10 @@ published: true
 
 # PV & PVC stuck in terminating status
 
-1. PV, PVC 삭제 안될때  **---grace-period=0** 옵션으로 해보고 그래도 안되면 **---grace-period=0 ---force** 으로 처리.
+1. PV, PVC 삭제 안될때  **grace-period**, **force** 옵션 사용.
+
+    > --grace-period=0    
+    > --grace-period=0 --force   
 
 1. 이것도 안되면 **k edit** 로 내용 확인.
     > kubernetes.io/pv-protection    
