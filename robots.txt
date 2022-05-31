@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jongha0212.github.io/sitemap.xml
